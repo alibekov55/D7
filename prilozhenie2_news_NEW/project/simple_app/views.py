@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import View  # импортируем уже знакомый generic
+from django.views.generic import View, DetailView  # импортируем уже знакомый generic
 from django.core.paginator import Paginator  # импортируем класс, позволяющий удобно осуществлять постраничный вывод
 from .models import Product
 from .filters import ProductFilter  # импортируем недавно написанный фильтр
@@ -7,7 +7,6 @@ from .filters import ProductFilter  # импортируем недавно на
 
 # Create your views here.
 class Products(View):
-
     def get(self, request):
         products = Product.objects.order_by('-price')
         p = Paginator(products, 1)  # создаём объект класса пагинатор, передаём ему список наших товаров и их количество для одной страницы
@@ -17,6 +16,12 @@ class Products(View):
             'products': products,
                 }
         return render(request, 'products.html', data)
+
+
+class ProductDetail(DetailView):
+    model = Product
+    template_name = 'product.html'
+    context_object_name = 'product'
 
 """class Products(ListView):
     model = Product

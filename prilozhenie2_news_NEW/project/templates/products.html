@@ -6,7 +6,8 @@
     <h3>{{ time_now }}</h3>
 
 <!-- Перед таблицей добавим форму для поиска -->
-<form method="GET">{{ filter.form }} <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы придётся делать самому -->
+<form method="GET">
+    {{ filter.form }} <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы придётся делать самому -->
     <input type="submit" value="Найти">
 </form>
 
@@ -25,7 +26,7 @@
             Quantity
         </th>
     </thead>
-    {% for product in filter.qs %} <!-- поменяем products на filter.qs, т. к. теперь мы забираем уже отобранную по каким-то параметрам информацию -->
+    {% for product in products %} <!--filter.qs-->  <!-- поменяем products на filter.qs, т. к. теперь мы забираем уже отобранную по каким-то параметрам информацию -->
     <tr>
         <td>
             {{ product.name|title }}
