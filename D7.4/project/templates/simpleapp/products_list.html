@@ -3,61 +3,49 @@
 {% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
 {% block title %} Products {% endblock title %}
 
+<!-- -->
+
 {% block content %}
-    <h1>Все товары</h1>
-    <h3>{{ time_now }}</h3>
-    <!--<h3> {{ value1|default_if_none:"ничего" }} </h3> -->
-    <hr>
-    {% if products %}
 
-<!-- Перед таблицей добавим форму для поиска -->
-<form method="GET">
-    {{ filter.form }} <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы придётся делать самому -->
-    <input type="submit" value="Найти">
-</form>
+<table>
+    <thead>
+        <th>
+            Name
+        </th>
+        <th>
+            Category
+        </th>
+        <th>
+            Price
+        </th>
+        <th>
+            Quantity
+        </th>
+    </thead>
+    {% for product in filter.qs %} <!-- поменяем products на filter.qs, т.к. теперь мы забираем уже отобранную по каким-то параметрам информацию -->
+    <tr>
+        <td>
+            <a href="{% url 'product_detail' product.id %}">{{ product.name|title }}</a> <!-- При нажатии на имя товара в таблице нас теперь будет перекидывать на страницу с самого товара -->
+            <a href="{% url 'product_update' product.id %}"><u>Редактировать</u></a> <!-- добавим ссылку на редактирование товара-->
 
-        <table>
-            <tr>
-                <td>
-                    Название
-                </td>
-                <td>
-                    Описание
-                </td>
-                <td>
-                    Категория
-                </td>
-                <td>
-                    Цена
-                </td>
-                <td>
-                    Количество
-                </td>
-            </tr>
-        {% for product in products %}
-            <tr>
-                <td>
-                    {{ product.name|censor }} <!-- применим наш фильтр, чтобы название товара вывелось 4 раза -->
-                </td>
-                <td>
-                    {{ product.description|truncatewords:50|censor }}
-                </td>
-                <td>
-                    {{ product.category.name }}
-                </td>
-                <td>
-                    {{ product.price }}
-                </td>
-                <td>
-                    {{ product.quantity }}
-                </td>
-            </tr>
-        {% endfor %}
-        </table>
-    {% else %}
-        <h2>Товаров нет!</h2>
-    {% endif %}
+            <a href="{% url 'product_delete' product.id %}"><u> Удалить </u></a> <!-- добавим ссылку на удаление товара-->
+        </td>
+        <td>
+            {{ product.category.name|title }}
+        </td>
+        <td>
+            {{ product.price }}
+        </td>
+        <td>
+            {{ product.quantity }}
+        </td>
+    </tr>
+    {% endfor %}
 </table>
+
+<a href="{% url 'product_create' %}">Добавить новый товар</a> <br>
+
+
 {% if is_paginated %}
 
     {% if page_obj.has_previous %}
@@ -77,13 +65,9 @@
         <a href="?page={{ page_obj.next_page_number }}">>>></a>
         <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
     {% endif %}
-
 {% endif %}
-
-<form method="POST">
-    {% csrf_token %}
-    {{ form }} <!-- Теперь нам нужна только готовая форма и кнопка -->
-    <input type="submit" value="Добавить товар">
-</form>
+<br>
 
 {% endblock content %}
+
+<!-- -->

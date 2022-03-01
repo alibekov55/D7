@@ -1,18 +1,22 @@
+#Импортируем кеширование
+#from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+
 from django.shortcuts import render
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator
 from datetime import datetime
-from .models import Product, Category
+from .models import Products, Category, Product
 from .filters import ProductFilter
 from .forms import ProductForm  # импортируем нашу форму
 
 
-class Product(ListView):
-    model = Product  # указываем модель, объекты которой мы будем выводить
+"""class Products(ListView):
+    model = Products  # указываем модель, объекты которой мы будем выводить
     template_name = 'simpleapp/products_list.html'  # указываем имя шаблона, где будет лежать HTML, в котором будут все инструкции о том, как именно пользователю должны вывестись наши объекты
     context_object_name = 'products'  # это имя списка, в котором будут лежать все объекты, его надо указать, чтобы обратиться к самому списку объектов через HTML-шаблон
     ordering = ['-price']
-    queryset = Product.objects.order_by('-id')  # настроили пораметр отображения более новый продукт
+    queryset = Products.objects.order_by('-id')  # настроили пораметр отображения более новый продукт
     paginate_by = 1
     form_class = ProductForm  # добавляем форм класс, чтобы получать доступ к форме через метод POST
 
@@ -33,12 +37,49 @@ class Product(ListView):
         if form.is_valid():  # если пользователь ввёл всё правильно и нигде не ошибся, то сохраняем новый товар
             form.save()
 
-        return super().get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)"""
 
-class ProductDetail(DetailView):
+
+# из списка на главной странице уберём всё лишнее
+class Products(ListView):
     model = Product
-    template_name = 'simpleapp/product_list.html'
+    template_name = 'simpleapp/products_list.html'
+    context_object_name = 'products'
+    ordering = ['-price']
+    paginate_by = 1
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = ProductFilter(self.request.GET, queryset=self.get_queryset())
+        return context
+
+# дженерик для создания объекта. Надо указать только имя шаблона и класс формы, который мы написали в прошлом юните. Остальное он сделает за вас
+class ProductCreateView(CreateView):
+    template_name = 'simpleapp/products_create.html'
+    form_class = ProductForm
+
+class ProductDetailView(DetailView):
+    model = Products
+    template_name = 'simpleapp/products_list.html'
     context_object_name = 'product'
+
+
+# дженерик для редактирования объекта
+class ProductUpdateView(UpdateView):
+    template_name = 'simpleapp/products_create.html'
+    form_class = ProductForm
+
+    # метод get_object мы используем вместо queryset, чтобы получить информацию об объекте, который мы собираемся редактировать
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return Products.objects.get(pk=id)
+
+
+# дженерик для удаления товара
+class ProductDeleteView(DeleteView):
+    template_name = 'simpleapp/products_delete.html'
+    queryset = Product.objects.all()
+    success_url = '/product/'
 
 """class Products(ListView):
     model = Product

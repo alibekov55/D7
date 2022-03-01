@@ -1,10 +1,10 @@
 from django_filters import FilterSet
-from .models import Product
+from .models import Products
 
 
 class ProductFilter(FilterSet):
     class Meta:
-        model = Product
+        model = Products
         fields = {
             'name': ['icontains'],
             # мы хотим чтобы нам выводило имя хотя бы отдалённо похожее на то, что запросил пользователь

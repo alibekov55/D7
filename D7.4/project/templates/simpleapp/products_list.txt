@@ -1,3 +1,96 @@
+<!-- -->
+
+{% block content %}
+    <h1>Все товары</h1>
+    <h3>{{ time_now }}</h3>
+    <!--<h3> {{ value1|default_if_none:"ничего" }} </h3> -->
+    <hr>
+    {% if products %}
+
+<!-- Перед таблицей добавим форму для поиска -->
+<form method="GET">
+    {{ filter.form }} <!-- Форму от фильтров за нас сделает Django. А вот кнопку, увы придётся делать самому -->
+    <input type="submit" value="Найти">
+</form>
+
+        <table>
+            <tr>
+                <td>
+                    Название
+                </td>
+                <td>
+                    Описание
+                </td>
+                <td>
+                    Категория
+                </td>
+                <td>
+                    Цена
+                </td>
+                <td>
+                    Количество
+                </td>
+            </tr>
+        {% for product in products %}
+            <tr>
+                <td>
+                    {{ product.name|censor }} <!-- применим наш фильтр, чтобы название товара вывелось 4 раза -->
+                </td>
+                <td>
+                    {{ product.description|truncatewords:50|censor }}
+                </td>
+                <td>
+                    {{ product.category.name }}
+                </td>
+                <td>
+                    {{ product.price }}
+                </td>
+                <td>
+                    {{ product.quantity }}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+    {% else %}
+        <h2>Товаров нет!</h2>
+    {% endif %}
+</table>
+{% if is_paginated %}
+
+    {% if page_obj.has_previous %}
+        <a href="?page=1">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}"><<<</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <a>{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}">>>></a>
+        <a href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+    {% endif %}
+
+{% endif %}
+
+<form method="POST">
+    {% csrf_token %}
+    {{ form }} <!-- Теперь нам нужна только готовая форма и кнопка -->
+    <input type="submit" value="Добавить товар">
+</form>
+
+{% endblock content %}
+<!-- -->
+
+
+
+
+
+
 {% extends 'flatpages/default.html' %}
 
 {% load custom_filters %} <!-- не забываем заранее загружать наши фильтры! -->
