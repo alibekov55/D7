@@ -7,8 +7,8 @@ urlpatterns = [# path означает "путь". В данном случае 
     path('', Products.as_view()), # т. к. сам по себе это класс, то нам надо представить этот класс в виде view. Для этого вызываем метод as_view
     path('<int:pk>', cache_page(100)(ProductDetailView.as_view()), name='product_detail'), # pk — это первичный ключ товара, который будет выводиться у нас в шаблон
     path('create/', ProductCreateView.as_view(), name='product_create'),
-    path('<int:pk>', ProductUpdateView.as_view(), name='product_update'),
-    path('<int:pk>', ProductDeleteView.as_view(), name='product_delete'),
+    path('update/<int:pk>', ProductUpdateView.as_view(), name='product_update'),
+    path('delete/<int:pk>', ProductDeleteView.as_view(), name='product_delete'),
 ]
 
 """from django.urls import path

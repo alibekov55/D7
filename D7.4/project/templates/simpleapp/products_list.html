@@ -8,6 +8,12 @@
 {% block content %}
 
 <table>
+
+        <form method="GET">
+            {{ filter.form }}
+            <input type="submit" value="Найти">
+        </form>
+
     <thead>
         <th>
             Name
@@ -45,7 +51,6 @@
 
 <a href="{% url 'product_create' %}">Добавить новый товар</a> <br>
 
-
 {% if is_paginated %}
 
     {% if page_obj.has_previous %}
@@ -69,5 +74,3 @@
 <br>
 
 {% endblock content %}
-
-<!-- -->

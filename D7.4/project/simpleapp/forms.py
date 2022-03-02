@@ -7,4 +7,5 @@ class ProductForm(ModelForm):
 
     class Meta:
         model = Products
-        fields = ['name', 'description', 'price', 'category', 'quantity', 'check_box']  # не забываем включить галочку в поля, иначе она не будет показываться на странице!
+        fields = ['name', 'price', 'category', 'quantity', 'check_box']  # не забываем включить галочку в поля, иначе она не будет показываться на странице!
+        #'description',

@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.core.paginator import Paginator
 from datetime import datetime
-from .models import Products, Category, Product
+from .models import Product #Products, Category,
 from .filters import ProductFilter
 from .forms import ProductForm  # импортируем нашу форму
 
@@ -44,7 +44,7 @@ from .forms import ProductForm  # импортируем нашу форму
 class Products(ListView):
     model = Product
     template_name = 'simpleapp/products_list.html'
-    context_object_name = 'products'
+    context_object_name = 'product'
     ordering = ['-price']
     paginate_by = 1
 
@@ -55,31 +55,34 @@ class Products(ListView):
 
 # дженерик для создания объекта. Надо указать только имя шаблона и класс формы, который мы написали в прошлом юните. Остальное он сделает за вас
 class ProductCreateView(CreateView):
-    template_name = 'simpleapp/products_create.html'
+    template_name = 'simpleapp/product_create.html'
     form_class = ProductForm
 
+    def get_absolute_url(self):  # добавим абсолютный путь, чтобы после создания нас перебрасывало на страницу с товаром
+        return f'/products/{self.id}'
+
 class ProductDetailView(DetailView):
-    model = Products
-    template_name = 'simpleapp/products_list.html'
+    model = Product
+    template_name = 'simpleapp/product_detail.html'
     context_object_name = 'product'
 
 
 # дженерик для редактирования объекта
 class ProductUpdateView(UpdateView):
-    template_name = 'simpleapp/products_create.html'
+    template_name = 'simpleapp/product_create.html'
     form_class = ProductForm
 
     # метод get_object мы используем вместо queryset, чтобы получить информацию об объекте, который мы собираемся редактировать
     def get_object(self, **kwargs):
         id = self.kwargs.get('pk')
-        return Products.objects.get(pk=id)
+        return Product.objects.get(pk=id)
 
 
 # дженерик для удаления товара
 class ProductDeleteView(DeleteView):
-    template_name = 'simpleapp/products_delete.html'
+    template_name = 'simpleapp/product_delete.html'
     queryset = Product.objects.all()
-    success_url = '/product/'
+    success_url = '/products/'
 
 """class Products(ListView):
     model = Product
