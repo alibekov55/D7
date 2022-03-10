@@ -10,7 +10,7 @@ def multiply(value, arg):  # первый аргумент здесь — это
 @register.filter(name='censor')
 def censor(value):
     if isinstance(value, str):
-        list = ['ух', 'ор', 'ах', 'ай', 'бля', 'сука', 'хуй', 'дебил', , 'пизд', 'зда', ] # Список нецензурных слов
+        list = ['ух', 'ор', 'ах', 'ай', 'бля', 'сука', 'хуй', 'дебил', 'пизд', 'зда', ] # Список нецензурных слов
         for A in list:
             value = value.replace(A, '#') # Замена совпадений подстроки на @!#%
         return str(value)
